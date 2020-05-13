@@ -22,7 +22,8 @@ class Runner:
     """ A pylint runner that will lint all files recursively from the CWD. """
 
     DEFAULT_IGNORE_FOLDERS = [".git", ".idea", "__pycache__"]
-    DEFAULT_ARGS = ["--reports=n", "--output-format=colorized"]
+    DEFAULT_OUTPUT_FORMAT = "colorized"
+    DEFAULT_ARGS = ["--reports=n"]
     DEFAULT_RCFILE = ".pylintrc"
 
     def __init__(self, args=None):
@@ -31,6 +32,7 @@ class Runner:
         self.verbose = False
         self.args = self.DEFAULT_ARGS
         self.rcfile = self.DEFAULT_RCFILE
+        self.output_format = self.DEFAULT_OUTPUT_FORMAT
         self.ignore_folders = self.DEFAULT_IGNORE_FOLDERS
 
         self._parse_args(args or sys.argv[1:])
@@ -60,6 +62,17 @@ class Runner:
         )
 
         parser.add_argument(
+            "--output-format",
+            dest="output_format",
+            action="store",
+            default=self.DEFAULT_OUTPUT_FORMAT,
+            help="Set the output format. Available formats are text,\
+                            parseable, colorized, json and msvs (visual studio).\
+                            You can also give a reporter class, e.g.\
+                            mypackage.mymodule.MyReporterClass."
+        )
+
+        parser.add_argument(
             "-V",
             "--version",
             action="version",
@@ -74,6 +87,8 @@ class Runner:
             if not os.path.isfile(options.rcfile):
                 options.rcfile = os.getcwd() + "/" + options.rcfile
             self.rcfile = options.rcfile
+
+        self.output_format = options.output_format
 
         return options
 
@@ -174,6 +189,8 @@ class Runner:
 
         if not self._is_using_default_rcfile():
             self.args += ["--rcfile={}".format(self.rcfile)]
+
+        self.args += ["--output-format={}".format(self.output_format)]
 
         exit_kwarg = {"do_exit": False}
 

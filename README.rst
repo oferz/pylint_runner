@@ -100,3 +100,11 @@ It will read the value of `ignore` from the rcfile and ignore any matching files
 files to pass to python.
 
 It will also pass that rcfile for use by pylint.
+
+Output format
+-------------
+
+This allows you to specify a custom output format. That format will be passed to pylint.
+
+Available formats are `text`, `parseable`, `colorized`, `json` and `msvs` (visual studio).
+You can also give a reporter class, e.g. `mypackage.mymodule.MyReporterClass`.
